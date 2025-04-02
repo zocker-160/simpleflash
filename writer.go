@@ -65,17 +65,18 @@ func flashImage(imagePath, target string, buffsize Buffsize) error {
 	defer targetFile.Close()
 
 	var source io.Reader
+	bar := progressbar.DefaultBytes(imgInfo.Size(), "Flashing")
 
-	if strings.HasSuffix(imagePath, ".xz") {
+	if strings.HasSuffix(imagePath, XZ_SUFFIX) {
 		fmt.Println("detected xz compression")
-		r, err := xz.NewReader(imgFile)		
+		r, err := xz.NewReader(io.TeeReader(imgFile, bar))
 		if err != nil {
 			return err
 		}
 		source = r
-	} else if strings.HasSuffix(imagePath, ".gz") {
+	} else if strings.HasSuffix(imagePath, GZ_SUFFIG) {
 		fmt.Println("detected gzip compression")
-		r, err := gzip.NewReader(imgFile)
+		r, err := gzip.NewReader(io.TeeReader(imgFile, bar))
 		if err != nil {
 			return err
 		}
@@ -83,12 +84,10 @@ func flashImage(imagePath, target string, buffsize Buffsize) error {
 
 		source = r
 	} else {
-		source = imgFile
+		source = io.TeeReader(imgFile, bar)
 	}
 
-	bar := progressbar.DefaultBytes(imgInfo.Size(), "Flashing")
-	written, err := copy(io.MultiWriter(targetFile, bar), source, buffsize)
-
+	written, err := copy(targetFile, source, buffsize)
 	if err != nil {
 		return err
 	}

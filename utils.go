@@ -15,10 +15,12 @@ import (
 	"github.com/rymdport/portal/filechooser"
 )
 
+const IMG_SUFFIX = ".img"
+const XZ_SUFFIX = ".xz"
+const GZ_SUFFIG = ".gz"
+
 
 func getImageSaveLoc(deviceName string) (string, error) {
-	const IMG_SUFFIX = ".img"
-
 	if len(os.Args) > 1 {
 		fname := addSuffix(os.Args[1], IMG_SUFFIX)
 		return fname, nil
@@ -172,18 +174,14 @@ func checkOS() {
 	}
 }
 
-func checkRoot() {
-	if os.Geteuid() != 0 {
-		fmt.Println("This program must be run as root.")
-		os.Exit(1)
-	}
+func checkRoot() bool {
+	return os.Geteuid() == 0
 }
 
 func addSuffix(s, suffix string) string {
 	if !strings.HasSuffix(s, suffix) {
 		s += suffix
 	}
-
 	return s
 }
 
@@ -210,4 +208,3 @@ func copy(dst io.Writer, src io.Reader, buffsize Buffsize) (int64, error) {
 
 	return written, nil
 }
-

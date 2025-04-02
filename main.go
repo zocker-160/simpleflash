@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/charmbracelet/huh"
 )
@@ -19,13 +20,14 @@ const DefaultBuffsize = 1 * Megabyte
 
 func main() {
 	checkOS()
-	checkRoot()
+	isRoot := checkRoot()
 
 	modeSelect := huh.NewSelect[int]().
 		Title("Select action").
 		Options(
 			huh.NewOption("Flash image file to drive", 0),
 			huh.NewOption("Create image file from drive", 1),
+			huh.NewOption("Image to image conversion", 3),
 			huh.NewOption("Transer image file over SSH (WiP)", 2),
 			huh.NewOption("Exit", 99),
 		)
@@ -37,11 +39,13 @@ func main() {
 
 	switch modeSelect.GetValue() {
 	case 0:
-		err = flashImageToDisk()
+		err = requireRoot(isRoot, flashImageToDisk)
 	case 1:
-		err = createImageFromDisk()
+		err = requireRoot(isRoot, createImageFromDisk)
 	case 2:
-		err = createImageToSSH()
+		err = requireRoot(isRoot, createImageToSSH)
+	case 3:
+		err = imageToImage()
 
 	case 99:
 		return
@@ -50,5 +54,15 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 		main()
+	}
+}
+
+func requireRoot(isRoot bool, action func() error) error {
+	if isRoot {
+		return action()
+	} else {
+		fmt.Println("This action must be run as root")
+		os.Exit(1)
+		return nil
 	}
 }

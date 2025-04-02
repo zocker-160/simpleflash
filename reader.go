@@ -90,10 +90,10 @@ func createImage(source, imagePath string, rawSize int64) error {
 		targetComp := gzip.NewWriter(targetFile)
 
 		written, err = io.Copy(io.MultiWriter(targetComp, bar), srcFile)
+		targetComp.Close()
 		if err != nil {
 			return err
 		}
-		targetComp.Close()
 	} else {
 		bar := progressbar.DefaultBytes(rawSize, "Creating image")
 

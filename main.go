@@ -28,7 +28,7 @@ func main() {
 			huh.NewOption("Flash image file to drive", 0),
 			huh.NewOption("Create image file from drive", 1),
 			huh.NewOption("Image to image conversion", 3),
-			huh.NewOption("Transer image file over SSH (WiP)", 2),
+			huh.NewOption("Transfer image file over SSH (WiP)", 2),
 			huh.NewOption("Exit", 99),
 		)
 

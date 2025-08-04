@@ -1,4 +1,4 @@
-module simpleflash
+module github.com/zocker-160/simpleflash
 
 go 1.24.1
 

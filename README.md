@@ -1,4 +1,4 @@
-# SimpleFlash
+# SimpleFlash [![blazingly fast](https://blazingly.fast/api/badge.svg?repo=zocker-160%2Fsimpleflash)](https://blazingly.fast)
 
 **SimpleFlash** is a **command-line** tool written in **Go** for flashing to and backing up from USB drives following the KISS principle.
 
